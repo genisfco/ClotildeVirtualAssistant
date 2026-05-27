@@ -1,48 +1,40 @@
 import datetime
+from pathlib import Path
 
 import pandas as pd
 
-hora_atual = datetime.datetime.now()
-#print(hora_atual)
-hora_atual, minuto_atual = datetime.datetime.time(hora_atual).hour, datetime.datetime.time(hora_atual).minute
-#print('Hora atual:', hora_atual)
-#print('Minuto atual: ', minuto_atual)
-data_atual = datetime.datetime.date(datetime.datetime.today())
-#print('Data atual:', data_atual)
+BASE_DIR = Path(__file__).resolve().parent.parent
+PLANILHA_AGENDA = BASE_DIR / 'agenda.xlsx'
 
-planilha_agenda = '/Users/profa/PycharmProjects/AssistenteVirtual/agenda.xlsx'
 
-agenda = pd.read_excel(planilha_agenda)
-#print(agenda)
+def carrega_agenda():
+    if not PLANILHA_AGENDA.exists():
+        print(f'[INFO] Arquivo de agenda não encontrado: {PLANILHA_AGENDA}')
+        return False
 
-descricao, responsavel, hora_agenda = [], [], []
+    try:
+        agenda = pd.read_excel(PLANILHA_AGENDA)
+    except Exception as exc:
+        print(f'[INFO] Não foi possível ler a agenda: {exc}')
+        return False
 
-for index, row in agenda.iterrows():
-    #print(index)
-    #print(row)
-    data = datetime.datetime.date(row['data'])
-    #print(data)
-    #print(data_atual)
-    hora_completa = datetime.datetime.strptime(str(row['hora']), '%H:%M:%S')
-    #print(hora_completa)
-    hora = datetime.datetime.time(hora_completa).hour
-    #print(hora)
+    hora_atual = datetime.datetime.now().hour
+    data_atual = datetime.date.today()
+    descricao, responsavel, hora_agenda = [], [], []
 
-    if data_atual == data:
-        if hora >= hora_atual:
+    for _, row in agenda.iterrows():
+        data = datetime.datetime.date(row['data'])
+        hora_completa = datetime.datetime.strptime(str(row['hora']), '%H:%M:%S')
+        hora = datetime.datetime.time(hora_completa).hour
+
+        if data_atual == data and hora >= hora_atual:
             descricao.append(row['descricao'])
             responsavel.append(row['responsavel'])
             hora_agenda.append(row['hora'])
 
-#print(descricao)
-#print(responsavel)
-#print(hora_agenda)
-
-def carrega_agenda():
     if descricao:
         return descricao, responsavel, hora_agenda
-    else:
-        return False
+    return False
 
 
 

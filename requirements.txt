@@ -1,0 +1,11 @@
+pyttsx3
+SpeechRecognition
+playsound
+numpy
+librosa
+matplotlib
+seaborn
+pandas
+openpyxl
+PyAudio
+gTTS
