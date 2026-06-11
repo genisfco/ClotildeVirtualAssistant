@@ -6,8 +6,9 @@ horas = ['que horas são', 'hora', 'hora agora', 'que horas são agora', 'qual �
 data = ['que dia é hoje', 'que dia é', 'que dia hoje']
 analysis_mode = ['modo de emoção', 'ativar emoção','ativar']
 agenda = ['eventos hoje', 'agenda hoje', 'agenda', 'compromissos hoje', 'eventos de hoje', 'compromissos de hoje', 'eventos para hoje', 'agenda hoje']
+adicionar_agenda = ['adicionar compromisso', 'salvar compromisso', 'marcar evento', 'agendar', 'novo compromisso', 'criar evento']
 
-comandos = [funcoes, lembretes, ajuda, horas, data, analysis_mode, agenda]
+comandos = [funcoes, lembretes, ajuda, horas, data, analysis_mode, agenda, adicionar_agenda]
 #print(comandos)
 #print(comandos[2])
 

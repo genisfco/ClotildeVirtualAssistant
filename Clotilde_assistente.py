@@ -66,7 +66,7 @@ def search(frase):
 def speak(audio):
     atualizar_status("Falando...")
     engine = pyttsx3.init()
-    engine.setProperty('rate', 140)
+    engine.setProperty('rate', 180)
     engine.setProperty('volume', 1)
     engine.say(audio)
     engine.runAndWait()
@@ -90,7 +90,61 @@ def listen_microphone():
             return ''
 
 
+def normalizar_texto(texto):
+    texto = texto.lower().strip()
+    texto = texto.replace('ã', 'a').replace('á', 'a').replace('à', 'a').replace('â', 'a')
+    texto = texto.replace('õ', 'o').replace('ó', 'o').replace('ô', 'o').replace('é', 'e').replace('ê', 'e')
+    texto = texto.replace('í', 'i').replace('ú', 'u').replace('ç', 'c')
+    return texto
+
+
+def resposta_sim(texto):
+    t = normalizar_texto(texto)
+    return any(pal in t for pal in ['sim', 'quero', 'claro', 'confirmo', 'positivo', 'vou', 'pode'])
+
+
+def resposta_nao(texto):
+    t = normalizar_texto(texto)
+    return any(pal in t for pal in ['nao', 'nao quero', 'nao quero adicionar', 'nao quero salvar', 'nao quero agendar', 'cancelar', 'voltar'])
+
+
 # --- LÓGICA DE PROCESSAMENTO DOS COMANDOS ---
+def salvar_compromisso_por_voz():
+    speak('Claro. Qual é o nome do compromisso?')
+    descricao = listen_microphone().strip()
+    while not descricao or descricao.lower() in ('sim', 'não', 'nao', 'ok', 'claro'):
+        if not descricao:
+            speak('Não consegui ouvir o nome do compromisso. Repita, por favor.')
+        else:
+            speak('Repita o nome do compromisso, por favor.')
+        descricao = listen_microphone().strip()
+    if not descricao:
+        speak('Não consegui identificar o compromisso.')
+        return
+
+    speak('E qual é a data?')
+    data_texto = listen_microphone().strip().lower()
+    if not data_texto or 'hoje' in data_texto:
+        data = datetime.date.today().strftime('%Y-%m-%d')
+    elif 'amanhã' in data_texto or 'amanha' in data_texto:
+        data = (datetime.date.today() + datetime.timedelta(days=1)).strftime('%Y-%m-%d')
+    else:
+        data = data_texto
+
+    speak('Em que horário?')
+    hora = listen_microphone().strip()
+    if not hora:
+        hora = '09:00'
+
+    speak('Quem é o responsável?')
+    responsavel = listen_microphone().strip() or 'Você'
+
+    if carrega_agenda.adicionar_compromisso(descricao, responsavel, data, hora):
+        speak('Compromisso salvo na agenda com sucesso!')
+    else:
+        speak('Não foi possível salvar o compromisso.')
+
+
 def processar_comandos():
     result = listen_microphone()
     result_lower = result.lower()
@@ -154,6 +208,16 @@ def processar_comandos():
                     speak(f"{agenda[1][i]} {agenda[0][i]} agendada para as {str(agenda[2][i])}")
             else:
                 speak('Não há eventos agendados para hoje!')
+                speak('Deseja adicionar um evento agora?')
+                resposta = listen_microphone()
+                if resposta_sim(resposta):
+                    salvar_compromisso_por_voz()
+                else:
+                    speak('Entendido. Se precisar é só chamar!')
+
+        # 7. Adicionar compromisso
+        elif any(cmd in comando_puro for cmd in comandos[7]):
+            salvar_compromisso_por_voz()
 
         else:
             speak("Desculpe, não entendi esse comando.")
