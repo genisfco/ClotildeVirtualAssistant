@@ -90,7 +90,7 @@ def listen_microphone():
             return ''
 
 
-# --- LOGICA DE PROCESSAMENTO DOS COMANDOS ---
+# --- LÓGICA DE PROCESSAMENTO DOS COMANDOS ---
 def processar_comandos():
     result = listen_microphone()
     result_lower = result.lower()
@@ -133,9 +133,9 @@ def processar_comandos():
         elif any(cmd in comando_puro for cmd in comandos[4]):
             speak('Hoje é dia ' + date[0] + ' de ' + date[1])
 
-        # NOVA FUNCIONALIDADE: Notícias (Assumindo que comandos[5] possa ser usado ou adicionado)
+        # NOVA FUNCIONALIDADE: Notícias (Atualizado para Folha de S.Paulo)
         elif "notícia" in comando_puro or "notícias" in comando_puro:
-            speak("Buscando as últimas notícias no G1, aguarde.")
+            speak("Buscando as últimas notícias na Folha de S.Paulo, aguarde.")
             lista_noticias = buscar_noticias()
             if lista_noticias:
                 speak("Aqui estão as três principais manchetes de hoje:")
@@ -178,28 +178,28 @@ def log_conversa(texto):
     txt_historico.config(state=tk.DISABLED)
 
 
-# Configuração da Janela Principal
+# Configuração da Janela Principal (Mudança para Branco e Tons de Azul)
 root = tk.Tk()
 root.title("Assistente Virtual Clotilde")
 root.geometry("450x550")
-root.configure(bg="#2c3e50")
+root.configure(bg="#ffffff") # Fundo Branco
 
-# Título
-lbl_titulo = tk.Label(root, text="Clotilde", font=("Helvetica", 20, "bold"), bg="#2c3e50", fg="#ecf0f1")
+# Título (Texto em Azul Escuro)
+lbl_titulo = tk.Label(root, text="Clotilde", font=("Helvetica", 22, "bold"), bg="#ffffff", fg="#0056b3")
 lbl_titulo.pack(pady=15)
 
-# Status
-lbl_status = tk.Label(root, text="Status: Pronta", font=("Helvetica", 12, "italic"), bg="#2c3e50", fg="#2ecc71")
+# Status (Texto em Preto / Itálico)
+lbl_status = tk.Label(root, text="Status: Pronta", font=("Helvetica", 12, "italic"), bg="#ffffff", fg="#333333")
 lbl_status.pack(pady=5)
 
-# Caixa de Histórico de Conversa
+# Caixa de Histórico de Conversa (Fundo Cinza Claro, Bordas Azuis Sutis, Texto Preto)
 txt_historico = scrolledtext.ScrolledText(root, width=50, height=18, font=("Courier New", 10), state=tk.DISABLED,
-                                          bg="#34495e", fg="#ecf0f1")
+                                          bg="#f8f9fa", fg="#000000", highlightbackground="#0056b3", highlightcolor="#0056b3", highlightthickness=1)
 txt_historico.pack(pady=15)
 
-# Botão para Acionar
-btn_falar = tk.Button(root, text="Falar com Clotilde", font=("Helvetica", 12, "bold"), bg="#e74c3c", fg="white",
-                      width=20, height=2, command=IniciarThread)
+# Botão para Acionar (Fundo Azul, Texto Branco)
+btn_falar = tk.Button(root, text="Falar com Clotilde", font=("Helvetica", 12, "bold"), bg="#0056b3", fg="#ffffff",
+                      activebackground="#004085", activeforeground="#ffffff", width=20, height=2, bd=0, cursor="hand2", command=IniciarThread)
 btn_falar.pack(pady=10)
 
 log_conversa("[INFO] Sistema inicializado com sucesso!")
